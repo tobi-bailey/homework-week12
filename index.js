@@ -6,7 +6,7 @@ var connection = mysql.createConnection({
 
   port: 3306,
   user: "root",
-  password: "",
+  password: "password",
   database: "employeeDB"
 });
 
@@ -39,10 +39,6 @@ function runSearch() {
 
       case "View Department":
         viewDepartment();
-        break;
-
-      case "Find data within a specific range":
-        rangeSearch();
         break;
 
       case "Add Role":
@@ -124,7 +120,7 @@ function addRole() {
     ])
     .then(function(answer) {
       connection.query(
-        "INSERT INTO department SET ?",
+        "INSERT INTO ee_role SET ?",
         {
           role_id: answer.role_id,
           title: answer.title,
@@ -171,7 +167,7 @@ function addEmployee() {
     ])
     .then(function(answer) {
       connection.query(
-        "INSERT INTO department SET ?",
+        "INSERT INTO employee SET ?",
         {
           ee_id: answer.ee_id,
           first_name: answer.first_name,
@@ -194,7 +190,7 @@ function viewDepartment() {
     for (var i = 0; i < res.length; i++) {
       console.log(res[i].dep_name);
     }
-    runSearch();
+    
   });
 }
 
@@ -218,3 +214,36 @@ function viewEmployee() {
   });
 }
 
+
+function updateRole() {
+    inquirer
+      .prompt([
+        {
+          name: "ee_id",
+          type: "input",
+          message: "What is the employee's id?"
+        },
+        {
+          name: "role_id",
+          type: "input",
+          message: "What is the employee's NEW role id?"
+        }
+      ])
+      .then(
+        function(answer){
+          connection.query(
+            "UPDATE employee SET ? WHERE ?",
+            // SET = name of column or row and new value
+            // Where =
+            [
+              {
+                role_id: answer.role_id
+              },
+              {
+                ee_id: answer.ee_id
+              }
+            ],
+          );
+          runSearch();
+        });
+};
